@@ -1,65 +1,137 @@
-import Image from "next/image";
+'use client';
+
+import React, { useRef, useEffect } from 'react';
+
+/**
+ * A basic Particle class for the background effect.
+ * Handles position, velocity, and basic rendering.
+ */
+class Particle {
+  x: number;
+  y: number;
+  radius: number;
+  dx: number;
+  dy: number;
+  color: string;
+  originalColor: string;
+  isHovered: boolean = false;
+
+  constructor(canvasWidth: number, canvasHeight: number) {
+    this.radius = Math.random() * 2 + 1;
+    this.x = Math.random() * (canvasWidth - this.radius * 2) + this.radius;
+    this.y = Math.random() * (canvasHeight - this.radius * 2) + this.radius;
+    
+    // Random velocity
+    this.dx = (Math.random() - 0.5) * 1;
+    this.dy = (Math.random() - 0.5) * 1;
+
+    // Vibrant colors
+    const hue = Math.random() * 60 + 200; // Blues and purples
+    this.color = `hsl(${hue}, 70%, 50%)`;
+    this.originalColor = this.color;
+  }
+
+  draw(ctx: CanvasRenderingContext2D) {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+    ctx.closePath();
+  }
+
+  update(canvasWidth: number, canvasHeight: number, mouse: { x: number, y: number }) {
+    // Boundary bounce
+    if (this.x + this.radius > canvasWidth || this.x - this.radius < 0) {
+      this.dx = -this.dx;
+    }
+    if (this.y + this.radius > canvasHeight || this.y - this.radius < 0) {
+      this.dy = -this.dy;
+    }
+
+    // Mouse interaction
+    const dx = mouse.x - this.x;
+    const dy = mouse.y - this.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const maxDistance = 100;
+
+    if (distance < maxDistance) {
+      this.radius = Math.min(this.radius + 1, 8); // Grow
+      this.color = 'hsl(50, 100%, 60%)'; // Turn yellow
+    } else {
+      this.radius = Math.max(this.radius - 0.1, Math.random() * 2 + 1); // Shrink back
+      this.color = this.originalColor;
+    }
+
+    this.x += this.dx;
+    this.y += this.dy;
+  }
+}
 
 export default function Home() {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animationFrameId: number;
+    let particles: Particle[] = [];
+    const mouse = { x: -1000, y: -1000 };
+
+    const init = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      
+      particles = [];
+      const particleCount = Math.min(200, (canvas.width * canvas.height) / 5000); // Responsive count
+      
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle(canvas.width, canvas.height));
+      }
+    };
+
+    const animate = () => {
+      animationFrameId = requestAnimationFrame(animate);
+      
+      // Clear with slight fade for trails (optional, using solid clear for performance/cleanliness)
+      ctx.fillStyle = '#0a0a16'; // Background color
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      particles.forEach((particle) => {
+        particle.update(canvas.width, canvas.height, mouse);
+        particle.draw(ctx);
+      });
+    };
+
+    const handleMouseMove = (event: MouseEvent) => {
+      mouse.x = event.clientX;
+      mouse.y = event.clientY;
+    };
+
+    const handleResize = () => {
+      init();
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('resize', handleResize);
+
+    init();
+    animate();
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <canvas 
+      ref={canvasRef} 
+      className="fixed top-0 left-0 w-full h-full z-0 bg-[#0a0a16]"
+    />
   );
 }
