@@ -39,3 +39,40 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# -------------------------
+# AWS / credentials safety
+# -------------------------
+.aws/
+.aws/*
+**/.aws/*
+*.credentials
+*.key
+*.secret
+
+# -------------------------
+# OS / editor noise
+# -------------------------
+Thumbs.db
+*.swp
+*.swo
+*.bak
+
+# -------------------------
+# Logs
+# -------------------------
+logs/
+*.log
+
+# -------------------------
+# Local build artifacts
+# -------------------------
+dist/
+tmp/
+temp/
+
+# -------------------------
+# Optional: assets if you ever want them excluded
+# (leave commented if you want assets tracked)
+# -------------------------
+# /assets/
