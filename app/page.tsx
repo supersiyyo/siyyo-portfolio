@@ -129,9 +129,16 @@ export default function Home() {
   }, []);
 
   return (
-    <canvas 
-      ref={canvasRef} 
-      className="fixed top-0 left-0 w-full h-full z-0 bg-[#0a0a16]"
-    />
+    <main className="relative min-h-screen">
+      <canvas 
+        ref={canvasRef} 
+        className="fixed top-0 left-0 w-full h-full z-0 bg-[#0a0a16]"
+      />
+      <div className="relative z-10 flex items-center justify-center min-h-screen pointer-events-none">
+        <h1 className="text-8xl font-bold tracking-tighter text-transparent bg-clip-text bg-linear-to-r from-cyan-400 via-blue-500 to-purple-600 drop-shadow-[0_0_15px_rgba(56,189,248,0.5)]">
+          Siyyo
+        </h1>
+      </div>
+    </main>
   );
 }
