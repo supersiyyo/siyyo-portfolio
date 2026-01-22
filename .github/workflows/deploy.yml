@@ -32,7 +32,6 @@ jobs:
       - name: Build & export
         run: |
           npm run build
-          npm run export
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
