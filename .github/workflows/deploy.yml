@@ -3,6 +3,8 @@ name: Deploy siyyo-portfolio
 on:
   push:
     branches: [ master ]
+    paths-ignore:
+      - 'legacy_components/**'
 
 permissions:
   id-token: write
@@ -15,6 +17,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Remove legacy components
+        run: rm -rf legacy_components
 
       - name: Setup Node
         uses: actions/setup-node@v4
