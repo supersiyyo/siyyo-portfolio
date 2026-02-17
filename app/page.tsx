@@ -70,6 +70,28 @@ class Particle {
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animationFrameId: number;
+    let particles: Particle[] = [];
+    const mouse = { x: -1000, y: -1000 };
+
+    const init = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      
+      particles = [];
+      const particleCount = Math.min(200, (canvas.width * canvas.height) / 5000); // Responsive count
+      
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle(canvas.width, canvas.height));
+      }
+    };
 
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
