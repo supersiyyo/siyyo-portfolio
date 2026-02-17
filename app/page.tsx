@@ -111,21 +111,8 @@ export default function Home() {
       mouse.y = event.clientY;
     };
 
-    const handleResize = () => {
-      init();
-    };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('resize', handleResize);
 
-    init();
-    animate();
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('resize', handleResize);
-      cancelAnimationFrame(animationFrameId);
-    };
   }, []);
 
   return (
