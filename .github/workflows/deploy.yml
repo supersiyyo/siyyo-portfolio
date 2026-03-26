@@ -17,8 +17,9 @@ jobs:
     env:
       SITEGROUND_HOST: ${{ secrets.SITEGROUND_HOST }}
       SITEGROUND_USERNAME: ${{ secrets.SITEGROUND_USERNAME }}
-      SITEGROUND_PASSWORD: ${{ secrets.SITEGROUND_PASSWORD }}
       SITEGROUND_DEPLOY_PATH: ${{ secrets.SITEGROUND_DEPLOY_PATH }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_PASSPHRASE: ${{ secrets.SSH_PASSPHRASE }}
 
     steps:
       - name: Checkout
@@ -30,7 +31,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
 
       - name: Install dependencies
         run: npm ci
@@ -38,14 +39,14 @@ jobs:
       - name: Build & export
         run: npm run build
 
-      - name: Deploy to SiteGround via FTPS
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - name: Deploy to SiteGround via SFTP (SSH)
+        uses: easingthemes/ssh-deploy@v5.1.0
         with:
-          server: ${{ env.SITEGROUND_HOST }}
-          username: ${{ env.SITEGROUND_USERNAME }}
-          password: ${{ env.SITEGROUND_PASSWORD }}
-          protocol: ftps
-          port: 21
-          local-dir: ./out/
-          server-dir: ${{ env.SITEGROUND_DEPLOY_PATH }}
-          dangerous-clean-slate: true
+          SSH_PRIVATE_KEY: ${{ env.SSH_PRIVATE_KEY }}
+          PASSPHRASE: ${{ env.SSH_PASSPHRASE }}
+          ARGS: "-rltgoDzvO"
+          SOURCE: "out/"
+          REMOTE_HOST: ${{ env.SITEGROUND_HOST }}
+          REMOTE_USER: ${{ env.SITEGROUND_USERNAME }}
+          TARGET: ${{ env.SITEGROUND_DEPLOY_PATH }}
+          PORT: 18765

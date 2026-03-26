@@ -5,9 +5,10 @@ Personal portfolio site for [siyyo.dev](https://siyyo.dev), built with Next.js a
 ## Tech Stack
 
 - **Framework:** Next.js 16 (static export)
+- **Node.js Version:** 24 (LTS)
 - **Styling:** Tailwind CSS 4
-- **Hosting:** SiteGround (FTPS deploy)
-- **CI/CD:** GitHub Actions → FTPS to SiteGround (Port 21)
+- **Hosting:** SiteGround (SFTP/SSH deploy)
+- **CI/CD:** GitHub Actions → SFTP to SiteGround (Port 18765)
 
 ## Getting Started
 
@@ -28,10 +29,12 @@ The workflow (`deploy.yml`) runs `npm run build` and uploads the static `./out` 
 
 | Secret | Description |
 |---|---|
-| `SITEGROUND_HOST` | SiteGround FTP hostname |
-| `SITEGROUND_USERNAME` | FTP username |
-| `SITEGROUND_PASSWORD` | FTP password |
+| `SITEGROUND_HOST` | SiteGround FTP/SFTP hostname |
+| `SITEGROUND_USERNAME` | FTP/SFTP username |
+| `SITEGROUND_PASSWORD` | FTP/SFTP password (fallback) |
 | `SITEGROUND_DEPLOY_PATH` | Server directory (e.g. `public_html/`) |
+| `SSH_PRIVATE_KEY` | (Recommended) SSH Private Key from Site Tools |
+| `SSH_PASSPHRASE` | Passphrase for your SSH Private Key |
 
 ## Project Structure
 
