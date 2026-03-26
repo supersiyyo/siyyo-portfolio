@@ -12,7 +12,7 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # Mapping secrets to env vars often clears "Context access might be invalid"
+    # Mapping secrets to env vars clears "Context access might be invalid"
     # warnings in VS Code by providing a local context the linter recognizes.
     env:
       SITEGROUND_HOST: ${{ secrets.SITEGROUND_HOST }}
@@ -38,14 +38,14 @@ jobs:
       - name: Build & export
         run: npm run build
 
-      - name: Deploy to SiteGround via SFTP
+      - name: Deploy to SiteGround via FTPS
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ env.SITEGROUND_HOST }}
           username: ${{ env.SITEGROUND_USERNAME }}
           password: ${{ env.SITEGROUND_PASSWORD }}
-          protocol: sftp
-          port: 18765
+          protocol: ftps
+          port: 21
           local-dir: ./out/
           server-dir: ${{ env.SITEGROUND_DEPLOY_PATH }}
           dangerous-clean-slate: true
