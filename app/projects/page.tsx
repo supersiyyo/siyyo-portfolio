@@ -1,96 +1,53 @@
-'use client';
-
-import Link from 'next/link';
-
-const projects = [
-  {
-    title: 'Long Live Santa',
-    description: 'A Roblox multiplayer game featuring weapon systems, care package drops, and dynamic map generation.',
-    tags: ['Roblox', 'Luau', 'Game Dev'],
-    status: 'In Progress',
-  },
-  {
-    title: 'Siyyo Portfolio',
-    description: 'This portfolio site — built with Next.js, Tailwind CSS, and deployed to SiteGround via GitHub Actions.',
-    tags: ['Next.js', 'Tailwind', 'TypeScript'],
-    status: 'Live',
-  },
-];
+import React from 'react';
+import PageCard from '../components/PageCard';
 
 export default function ProjectsPage() {
+  const projects = [
+    {
+      path: '/projects/foodi',
+      title: 'FOODI',
+      description:
+        'A research project improving controlled-environment agriculture through automation and digital-twin modeling.',
+      icon: (
+        <img
+          src="/images/FOODI_ICON.png"
+          alt="FOODI Logo"
+          className="h-12 w-12 rounded-full object-cover"
+        />
+      ),
+    },
+    {
+      path: '/projects/sose',
+      title: 'SOSE',
+      description:
+        'A high-performance, distributed backend engine for powering real-time social media applications and analytics.',
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
+        </svg>
+      ),
+    },
+  ];
+
   return (
-    <main className="relative min-h-screen bg-[#0a0a16] text-white">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-[#0a0a16]/80 border-b border-white/5">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link
-            href="/"
-            className="text-xl font-bold tracking-tight text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-blue-500 hover:opacity-80 transition-opacity"
-          >
-            Siyyo
-          </Link>
-          <Link
-            href="/"
-            className="text-sm text-white/50 hover:text-white transition-colors duration-200"
-          >
-            ← Back Home
-          </Link>
-        </div>
-      </nav>
-
-      {/* Content */}
-      <div className="max-w-5xl mx-auto px-6 pt-28 pb-20">
-        <header className="mb-16">
-          <h1 className="text-5xl font-bold tracking-tight mb-4">
-            Projects
-          </h1>
-          <p className="text-lg text-white/50 max-w-2xl">
-            A collection of things I&apos;ve been building — from games to web apps.
-          </p>
-        </header>
-
-        <div className="grid gap-6 sm:grid-cols-2">
-          {projects.map((project) => (
-            <article
-              key={project.title}
-              className="group relative rounded-2xl border border-white/10 bg-white/[0.03] p-6
-                         hover:border-cyan-400/30 hover:bg-white/[0.06]
-                         transition-all duration-300 ease-out
-                         hover:shadow-[0_0_40px_rgba(56,189,248,0.08)]"
-            >
-              {/* Status badge */}
-              <span
-                className={`inline-block text-xs font-medium px-3 py-1 rounded-full mb-4
-                  ${project.status === 'Live'
-                    ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20'
-                    : 'bg-amber-500/15 text-amber-400 border border-amber-500/20'
-                  }`}
-              >
-                {project.status}
-              </span>
-
-              <h2 className="text-xl font-semibold mb-2 group-hover:text-cyan-300 transition-colors duration-200">
-                {project.title}
-              </h2>
-              <p className="text-white/40 text-sm leading-relaxed mb-5">
-                {project.description}
-              </p>
-
-              {/* Tags */}
-              <div className="flex flex-wrap gap-2">
-                {project.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-xs px-2.5 py-1 rounded-md bg-white/5 text-white/50 border border-white/5"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </article>
-          ))}
-        </div>
+    <div className="container mx-auto p-4 md:p-8">
+      <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900 dark:text-white text-center">
+        My Projects
+      </h1>
+      <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto text-center">
+        Here&apos;s a selection of my work. Click on a card to learn more about each project.
+      </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        {projects.map((project, index) => (
+          <PageCard
+            key={index}
+            path={project.path}
+            title={project.title}
+            description={project.description}
+            icon={project.icon}
+          />
+        ))}
       </div>
-    </main>
+    </div>
   );
 }

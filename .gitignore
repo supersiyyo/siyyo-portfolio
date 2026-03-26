@@ -76,3 +76,8 @@ temp/
 # (leave commented if you want assets tracked)
 # -------------------------
 # /assets/
+
+# -------------------------
+# SiteGround backup
+# -------------------------
+/siyyo_dev-main

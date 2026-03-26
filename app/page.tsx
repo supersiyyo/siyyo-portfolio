@@ -1,158 +1,131 @@
 'use client';
 
-import React, { useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import CircleCanvas from './components/CircleCanvas';
 
-/**
- * A basic Particle class for the background effect.
- * Handles position, velocity, and basic rendering.
- */
-class Particle {
-  x: number;
-  y: number;
-  radius: number;
-  dx: number;
-  dy: number;
-  color: string;
-  originalColor: string;
-  isHovered: boolean = false;
+const OrbLegend: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+  const personalityInfo = [
+    { color: 'hsl(50, 100%, 60%)', name: 'Playful', description: 'Gently chases after other orbs.' },
+    { color: 'hsl(180, 80%, 70%)', name: 'Shy', description: 'Actively avoids other orbs and the mouse cursor.' },
+    { color: 'hsl(260, 80%, 40%)', name: 'Loner', description: 'Seeks a single partner to orbit with for life.' },
+    { color: 'hsl(140, 80%, 50%)', name: 'Social', description: 'Gravitates towards the center of nearby groups.' },
+  ];
 
-  constructor(canvasWidth: number, canvasHeight: number) {
-    this.radius = Math.random() * 2 + 1;
-    this.x = Math.random() * (canvasWidth - this.radius * 2) + this.radius;
-    this.y = Math.random() * (canvasHeight - this.radius * 2) + this.radius;
-
-    // Random velocity
-    this.dx = (Math.random() - 0.5) * 1;
-    this.dy = (Math.random() - 0.5) * 1;
-
-    // Vibrant colors
-    const hue = Math.random() * 60 + 200; // Blues and purples
-    this.color = `hsl(${hue}, 70%, 50%)`;
-    this.originalColor = this.color;
-  }
-
-  draw(ctx: CanvasRenderingContext2D) {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-    ctx.fillStyle = this.color;
-    ctx.fill();
-    ctx.closePath();
-  }
-
-  update(canvasWidth: number, canvasHeight: number, mouse: { x: number; y: number }) {
-    // Boundary bounce
-    if (this.x + this.radius > canvasWidth || this.x - this.radius < 0) {
-      this.dx = -this.dx;
-    }
-    if (this.y + this.radius > canvasHeight || this.y - this.radius < 0) {
-      this.dy = -this.dy;
-    }
-
-    // Mouse interaction
-    const dx = mouse.x - this.x;
-    const dy = mouse.y - this.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    const maxDistance = 100;
-
-    if (distance < maxDistance) {
-      this.radius = Math.min(this.radius + 1, 8);
-      this.color = 'hsl(50, 100%, 60%)';
-    } else {
-      this.radius = Math.max(this.radius - 0.1, Math.random() * 2 + 1);
-      this.color = this.originalColor;
-    }
-
-    this.x += this.dx;
-    this.y += this.dy;
-  }
-}
+  return (
+    <div
+      className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center animate-fade-in"
+      onClick={onClose}
+    >
+      <div
+        className="bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 m-4 w-full max-w-md text-white shadow-2xl border border-white/10"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold tracking-wide">Orb Ecosystem</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-white text-3xl leading-none"
+            aria-label="Close legend"
+          >
+            &times;
+          </button>
+        </div>
+        <ul className="space-y-4">
+          {personalityInfo.map((p) => (
+            <li key={p.name} className="flex items-start">
+              <span
+                className="flex-shrink-0 w-5 h-5 rounded-full mt-1 mr-4"
+                style={{ backgroundColor: p.color, boxShadow: `0 0 8px ${p.color}` }}
+              ></span>
+              <div>
+                <h3 className="font-semibold text-lg">{p.name}</h3>
+                <p className="text-gray-300">{p.description}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+};
 
 export default function Home() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [animate, setAnimate] = useState(false);
+  const [isLegendVisible, setIsLegendVisible] = useState(false);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let animationFrameId: number;
-    let particles: Particle[] = [];
-    const mouse = { x: -1000, y: -1000 };
-
-    const init = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-
-      particles = [];
-      const particleCount = Math.min(200, (canvas.width * canvas.height) / 5000);
-
-      for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle(canvas.width, canvas.height));
-      }
-    };
-
-    const animate = () => {
-      animationFrameId = requestAnimationFrame(animate);
-
-      ctx.fillStyle = '#0a0a16';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      particles.forEach((particle) => {
-        particle.update(canvas.width, canvas.height, mouse);
-        particle.draw(ctx);
-      });
-    };
+    const timer = setTimeout(() => {
+      setAnimate(true);
+    }, 200);
 
     const handleMouseMove = (event: MouseEvent) => {
-      mouse.x = event.clientX;
-      mouse.y = event.clientY;
-    };
-
-    const handleResize = () => {
-      init();
+      setMousePos({ x: event.clientX, y: event.clientY });
     };
 
     window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('resize', handleResize);
-
-    init();
-    animate();
 
     return () => {
+      clearTimeout(timer);
       window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('resize', handleResize);
-      cancelAnimationFrame(animationFrameId);
     };
   }, []);
 
+  const parallaxStyle = (factor: number) => ({
+    transform: `translate(${mousePos.x / -factor}px, ${mousePos.y / -factor}px)`,
+  });
+
+  const name = 'Christopher Butler';
+
   return (
-    <main className="relative min-h-screen">
-      <canvas
-        ref={canvasRef}
-        className="fixed top-0 left-0 w-full h-full z-0 bg-[#0a0a16]"
-      />
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen gap-10">
-        <h1 className="text-8xl font-bold tracking-tighter text-transparent bg-clip-text bg-linear-to-r from-cyan-400 via-blue-500 to-purple-600 drop-shadow-[0_0_15px_rgba(56,189,248,0.5)] pointer-events-none">
-          Siyyo
+    <div className="relative h-screen w-full flex items-center justify-center overflow-hidden gradient-bg text-white">
+      {isLegendVisible && <OrbLegend onClose={() => setIsLegendVisible(false)} />}
+      <button
+        onClick={() => setIsLegendVisible(true)}
+        className="absolute top-6 right-6 z-20 p-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50 transform hover:scale-110"
+        aria-label="Show orb ecosystem legend"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </button>
+
+      <div
+        className="absolute inset-0 transition-transform duration-300 ease-out"
+        style={parallaxStyle(20)}
+      ></div>
+      <CircleCanvas />
+      <div
+        className="text-center z-10 p-4 transition-transform duration-300 ease-out"
+        style={parallaxStyle(50)}
+      >
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-wider mb-6">
+          {name.split('').map((char, index) => (
+            <span
+              key={index}
+              className={`inline-block ${animate ? 'animate-slide-in-fade' : 'opacity-0'}`}
+              style={{ animationDelay: `${index * 0.05}s` }}
+            >
+              {char === ' ' ? '\u00A0' : char}
+            </span>
+          ))}
         </h1>
+        <p
+          className={`text-2xl md:text-4xl text-indigo-100 font-medium tracking-wider drop-shadow-lg ${animate ? 'animate-slide-in-fade' : 'opacity-0'}`}
+          style={{ animationDelay: `${name.length * 0.05 + 0.2}s` }}
+        >
+          Software Engineer
+        </p>
         <Link
           href="/projects"
-          id="explore-projects-btn"
-          className="group relative px-8 py-4 rounded-full font-semibold text-white text-lg tracking-wide
-                     bg-white/5 backdrop-blur-sm border border-white/10
-                     hover:border-cyan-400/50 hover:bg-white/10 hover:scale-105
-                     transition-all duration-300 ease-out
-                     shadow-[0_0_20px_rgba(56,189,248,0.1)] hover:shadow-[0_0_30px_rgba(56,189,248,0.3)]"
+          id="view-my-work-btn"
+          className={`inline-block mt-12 px-8 py-3 bg-indigo-500 text-white font-bold rounded-full shadow-lg hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-75 transform hover:scale-105 transition-all duration-300 ${animate ? 'animate-slide-in-fade' : 'opacity-0'}`}
+          style={{ animationDelay: `${name.length * 0.05 + 0.4}s` }}
         >
-          Explore Projects
-          <span className="inline-block ml-2 transition-transform duration-300 group-hover:translate-x-1">
-            →
-          </span>
+          View My Work
         </Link>
       </div>
-    </main>
+    </div>
   );
 }
