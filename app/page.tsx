@@ -1,6 +1,7 @@
 'use client';
-//rebuild
+
 import React, { useRef, useEffect } from 'react';
+import Link from 'next/link';
 
 /**
  * A basic Particle class for the background effect.
@@ -20,7 +21,7 @@ class Particle {
     this.radius = Math.random() * 2 + 1;
     this.x = Math.random() * (canvasWidth - this.radius * 2) + this.radius;
     this.y = Math.random() * (canvasHeight - this.radius * 2) + this.radius;
-    
+
     // Random velocity
     this.dx = (Math.random() - 0.5) * 1;
     this.dy = (Math.random() - 0.5) * 1;
@@ -39,7 +40,7 @@ class Particle {
     ctx.closePath();
   }
 
-  update(canvasWidth: number, canvasHeight: number, mouse: { x: number, y: number }) {
+  update(canvasWidth: number, canvasHeight: number, mouse: { x: number; y: number }) {
     // Boundary bounce
     if (this.x + this.radius > canvasWidth || this.x - this.radius < 0) {
       this.dx = -this.dx;
@@ -55,10 +56,10 @@ class Particle {
     const maxDistance = 100;
 
     if (distance < maxDistance) {
-      this.radius = Math.min(this.radius + 1, 8); // Grow
-      this.color = 'hsl(50, 100%, 60%)'; // Turn yellow
+      this.radius = Math.min(this.radius + 1, 8);
+      this.color = 'hsl(50, 100%, 60%)';
     } else {
-      this.radius = Math.max(this.radius - 0.1, Math.random() * 2 + 1); // Shrink back
+      this.radius = Math.max(this.radius - 0.1, Math.random() * 2 + 1);
       this.color = this.originalColor;
     }
 
@@ -73,7 +74,7 @@ export default function Home() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
+
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
@@ -84,10 +85,10 @@ export default function Home() {
     const init = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      
+
       particles = [];
-      const particleCount = Math.min(200, (canvas.width * canvas.height) / 5000); // Responsive count
-      
+      const particleCount = Math.min(200, (canvas.width * canvas.height) / 5000);
+
       for (let i = 0; i < particleCount; i++) {
         particles.push(new Particle(canvas.width, canvas.height));
       }
@@ -95,9 +96,8 @@ export default function Home() {
 
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
-      
-      // Clear with slight fade for trails (optional, using solid clear for performance/cleanliness)
-      ctx.fillStyle = '#0a0a16'; // Background color
+
+      ctx.fillStyle = '#0a0a16';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       particles.forEach((particle) => {
@@ -130,14 +130,28 @@ export default function Home() {
 
   return (
     <main className="relative min-h-screen">
-      <canvas 
-        ref={canvasRef} 
+      <canvas
+        ref={canvasRef}
         className="fixed top-0 left-0 w-full h-full z-0 bg-[#0a0a16]"
       />
-      <div className="relative z-10 flex items-center justify-center min-h-screen pointer-events-none">
-        <h1 className="text-8xl font-bold tracking-tighter text-transparent bg-clip-text bg-linear-to-r from-cyan-400 via-blue-500 to-purple-600 drop-shadow-[0_0_15px_rgba(56,189,248,0.5)]">
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen gap-10">
+        <h1 className="text-8xl font-bold tracking-tighter text-transparent bg-clip-text bg-linear-to-r from-cyan-400 via-blue-500 to-purple-600 drop-shadow-[0_0_15px_rgba(56,189,248,0.5)] pointer-events-none">
           Siyyo
         </h1>
+        <Link
+          href="/projects"
+          id="explore-projects-btn"
+          className="group relative px-8 py-4 rounded-full font-semibold text-white text-lg tracking-wide
+                     bg-white/5 backdrop-blur-sm border border-white/10
+                     hover:border-cyan-400/50 hover:bg-white/10 hover:scale-105
+                     transition-all duration-300 ease-out
+                     shadow-[0_0_20px_rgba(56,189,248,0.1)] hover:shadow-[0_0_30px_rgba(56,189,248,0.3)]"
+        >
+          Explore Projects
+          <span className="inline-block ml-2 transition-transform duration-300 group-hover:translate-x-1">
+            →
+          </span>
+        </Link>
       </div>
     </main>
   );
