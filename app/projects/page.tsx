@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import PageCard from '../components/PageCard';
 
 export default function ProjectsPage() {
@@ -9,10 +10,12 @@ export default function ProjectsPage() {
       description:
         'A research project improving controlled-environment agriculture through automation and digital-twin modeling.',
       icon: (
-        <img
+        <Image
           src="/images/FOODI_ICON.png"
           alt="FOODI Logo"
-          className="h-12 w-12 rounded-full object-cover"
+          width={48}
+          height={48}
+          className="rounded-full object-cover"
         />
       ),
     },

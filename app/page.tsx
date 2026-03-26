@@ -35,7 +35,7 @@ const OrbLegend: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           {personalityInfo.map((p) => (
             <li key={p.name} className="flex items-start">
               <span
-                className="flex-shrink-0 w-5 h-5 rounded-full mt-1 mr-4"
+                className="shrink-0 w-5 h-5 rounded-full mt-1 mr-4"
                 style={{ backgroundColor: p.color, boxShadow: `0 0 8px ${p.color}` }}
               ></span>
               <div>

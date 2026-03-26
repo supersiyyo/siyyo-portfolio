@@ -11,7 +11,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   return (
     <div className="min-h-screen flex flex-col font-sans text-gray-800 dark:text-gray-200">
       {!isHome && <Header />}
-      <main className="flex-grow">{children}</main>
+      <main className="grow">{children}</main>
       {!isHome && (
         <footer className="text-center p-4 text-gray-500 dark:text-gray-400 text-sm">
           © {new Date().getFullYear()} Christopher Butler. All rights reserved.

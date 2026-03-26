@@ -6,8 +6,8 @@ Personal portfolio site for [siyyo.dev](https://siyyo.dev), built with Next.js a
 
 - **Framework:** Next.js 16 (static export)
 - **Styling:** Tailwind CSS 4
-- **Hosting:** SiteGround (FTPS deploy)
-- **CI/CD:** GitHub Actions → SFTP to SiteGround
+- **Hosting:** SiteGround (SFTP deploy)
+- **CI/CD:** GitHub Actions → SFTP to SiteGround (Port 18765)
 
 ## Getting Started
 
@@ -22,7 +22,7 @@ Open [http://localhost:3000](http://localhost:3000) to see the site locally.
 
 Pushing to `master` automatically builds and deploys via GitHub Actions.
 
-The workflow (`deploy.yml`) runs `npm run build` and uploads the static `./out` folder to SiteGround over FTPS.
+The workflow (`deploy.yml`) runs `npm run build` and uploads the static `./out` folder to SiteGround over SFTP (Port 18765).
 
 ### Required GitHub Secrets
 

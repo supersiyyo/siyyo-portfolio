@@ -12,6 +12,13 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # Mapping secrets to env vars often clears "Context access might be invalid"
+    # warnings in VS Code by providing a local context the linter recognizes.
+    env:
+      SITEGROUND_HOST: ${{ secrets.SITEGROUND_HOST }}
+      SITEGROUND_USERNAME: ${{ secrets.SITEGROUND_USERNAME }}
+      SITEGROUND_PASSWORD: ${{ secrets.SITEGROUND_PASSWORD }}
+      SITEGROUND_DEPLOY_PATH: ${{ secrets.SITEGROUND_DEPLOY_PATH }}
 
     steps:
       - name: Checkout
@@ -23,7 +30,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 22
 
       - name: Install dependencies
         run: npm ci
@@ -34,11 +41,11 @@ jobs:
       - name: Deploy to SiteGround via SFTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.SITEGROUND_HOST }}
-          username: ${{ secrets.SITEGROUND_USERNAME }}
-          password: ${{ secrets.SITEGROUND_PASSWORD }}
-          protocol: ftps
-          port: 21
+          server: ${{ env.SITEGROUND_HOST }}
+          username: ${{ env.SITEGROUND_USERNAME }}
+          password: ${{ env.SITEGROUND_PASSWORD }}
+          protocol: sftp
+          port: 18765
           local-dir: ./out/
-          server-dir: ${{ secrets.SITEGROUND_DEPLOY_PATH }}
+          server-dir: ${{ env.SITEGROUND_DEPLOY_PATH }}
           dangerous-clean-slate: true

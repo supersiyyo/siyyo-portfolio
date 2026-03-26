@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export default function FoodiPage() {
@@ -14,11 +15,13 @@ export default function FoodiPage() {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 md:p-12 animate-fade-in container mx-auto my-8 max-w-4xl">
       <div className="flex flex-col md:flex-row items-start md:items-center mb-8">
-        <div className="flex-shrink-0 mr-0 md:mr-6 mb-4 md:mb-0">
-          <img
+        <div className="shrink-0 mr-0 md:mr-6 mb-4 md:mb-0">
+          <Image
             src="/images/FOODI_ICON.png"
             alt="FOODI Project Logo"
-            className="h-16 w-16 rounded-full shadow-md object-cover"
+            width={64}
+            height={64}
+            className="rounded-full shadow-md object-cover"
           />
         </div>
         <div>
@@ -92,11 +95,12 @@ export default function FoodiPage() {
             <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
               Project Snapshot
             </h3>
-            <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-lg flex items-center justify-center mb-4 overflow-hidden aspect-square">
-              <img
+            <div className="relative w-full bg-gray-200 dark:bg-gray-600 rounded-lg flex items-center justify-center mb-4 overflow-hidden aspect-square">
+              <Image
                 src="/images/FOODI_ICON.png"
                 alt="FOODI Logo"
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
               />
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400">
