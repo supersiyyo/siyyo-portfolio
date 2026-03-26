@@ -100,14 +100,28 @@ export default function Home() {
         className="text-center z-10 p-4 transition-transform duration-300 ease-out"
         style={parallaxStyle(50)}
       >
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-wider mb-6">
-          {name.split('').map((char, index) => (
-            <span
-              key={index}
-              className={`inline-block ${animate ? 'animate-slide-in-fade' : 'opacity-0'}`}
-              style={{ animationDelay: `${index * 0.05}s` }}
-            >
-              {char === ' ' ? '\u00A0' : char}
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-wider mb-6 flex flex-wrap justify-center">
+          {name.split(' ').map((word, wordIndex) => (
+            <span key={wordIndex} className="inline-block whitespace-nowrap">
+              {word.split('').map((char, charIndex) => {
+                // Calculate total index for consistent animation delay
+                const previousWordsLength = name.split(' ').slice(0, wordIndex).join(' ').length;
+                const globalIndex = previousWordsLength + (wordIndex > 0 ? 1 : 0) + charIndex;
+                return (
+                  <span
+                    key={charIndex}
+                    className={`inline-block ${animate ? 'animate-slide-in-fade' : 'opacity-0'}`}
+                    style={{ animationDelay: `${globalIndex * 0.05}s` }}
+                  >
+                    {char}
+                  </span>
+                );
+              })}
+              {/* Add space between words, but keep it in its own span for animation timing if needed, 
+                  or just as a non-breaking space after the word */}
+              {wordIndex < name.split(' ').length - 1 && (
+                <span className="inline-block">&nbsp;</span>
+              )}
             </span>
           ))}
         </h1>
